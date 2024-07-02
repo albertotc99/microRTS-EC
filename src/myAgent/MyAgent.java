@@ -96,23 +96,29 @@ public class MyAgent extends AbstractionLayerAI {
     this.pTime = pTime;
     this.nHarvestWorkers = nHarvestWorkers;
     this.nAttackWorkers = nAttackWorkers;
-    this.probLight = probLight;
-    this.probRange = probRange;
-    this.probHeavy = probHeavy;
+    double totalProb = probLight + probHeavy + probRange;
+    this.probLight = probLight/totalProb;
+    this.probRange = probRange/totalProb;
+    this.probHeavy = probHeavy/totalProb;
     this.dBaseBarracks = dBaseBarracks;
     this.dUnitBuilding = dUnitBuilding;
+
+    initMapCycles();
   }
 
   public MyAgent(UnitTypeTable utt) {
     this(utt, new AStarPathFinding());
 
+    initMapCycles();
   }
 
   public MyAgent(UnitTypeTable utt, PathFinding a_pf) {
     super(a_pf);
     reset(utt);
+    initMapCycles();
+  }
 
-    // Agregar las correspondencias según la información proporcionada
+  private void initMapCycles(){
     mapCycles.put(8, 4000);   // 8x8 maps
     mapCycles.put(16, 5000);  // 16x16 maps
     mapCycles.put(24, 6000);  // 24x24 maps
