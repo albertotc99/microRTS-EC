@@ -5,4 +5,7 @@ tournament_*
 lib
 FirstExecGA
 .vscode
+*.csv
+*.txt
+maps
 

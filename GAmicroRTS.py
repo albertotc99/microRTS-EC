@@ -7,7 +7,6 @@ from inspyred import ec
 from inspyred.ec import terminators
 import subprocess
 import pandas as pd
-import email
 #end_imports
 
 
@@ -38,9 +37,9 @@ def evaluate_agent(candidates=None, args=None):
         offset = 14
         nAIs = 1
         nOpponentAIs = 2
-        nMaps = 4
-        nIter = 3
-        wins_row_idx = (offset + nMaps + nAIs + nOpponentAIs + nOpponentAIs * nMaps * nIter) - 2 # Minus 2 because of the column label and 0 indexing
+        nMaps = 2
+        nIter = 2
+        wins_row_idx = (offset + nMaps + nAIs + nOpponentAIs + (nOpponentAIs * nMaps * nIter)) - 2 # Minus 2 because of the column label and 0 indexing
         ties_row_idx = wins_row_idx + 2
 
         # check number of rows
@@ -48,17 +47,14 @@ def evaluate_agent(candidates=None, args=None):
             wins_row = df.iloc[wins_row_idx]
             ties_row = df.iloc[ties_row_idx]
 
-            # Select the columns with the number of victories against each opponent AI
-            wins_cols = wins_row[:nOpponentAIs]
-            ties_cols = ties_row[:nOpponentAIs]
-
             # convert to numeric and sum the values 
             if (nOpponentAIs > 1):
-                sum = wins_cols.apply(pd.to_numeric, errors='coerce').sum()
-                sum += ties_cols.apply(pd.to_numeric, errors='coerce').sum() * 0.5
-                fitness.append(int(sum))
+                ind_fitness = sum(float(wins) for wins in wins_row[0].split('\t') if wins)
+                ind_fitness += sum(float(ties) for ties in ties_row[0].split('\t') if ties) * 0.5
+                fitness.append(ind_fitness)
             else:
-                fitness.append(int(wins_cols) + 0.5*int(ties_cols))
+                fitness.append(int(wins_row) + 0.5*int(ties_row))
+
     return fitness
 
 
@@ -90,22 +86,21 @@ fin = time()
 final_pop.sort(reverse=True)
 
 # write data
-file = open("stats_ga.txt", 'w')
-file.write(str(fin-inicio) + " seconds employed")
-file.write(str(evaluations) + " evaluations")
-file.write(str(pop_size) + " pop size")
-file.write("Best individual")
-file.write(final_pop[0])
-
-
 timestamp = time()
-pd.DataFrame(final_pop).to_csv("population" + timestamp + ".csv")
+file = open("stats_ga " + str(timestamp) + ".txt", 'a')
+file.write(str(fin-inicio) + " seconds employed\n")
+file.write(str(evaluations) + " evaluations\n")
+file.write(str(pop_size) + " pop size\n")
+file.write("Best individual\n")
+file.write(str(final_pop[0]) + "\n")
 file.close()
+
+pd.DataFrame(final_pop).to_csv("population" + str(timestamp) + ".csv")
 
 # print data
 print(str(fin-inicio) + " seconds employed")
 print(str(evaluations) + " evaluations")
 print(str(pop_size) + " pop size")
 print("Best individual")
-print(final_pop[0])
+print(str(final_pop[0]))
 #end_main
