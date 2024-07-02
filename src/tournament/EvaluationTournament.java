@@ -81,9 +81,9 @@ public class EvaluationTournament {
     // opponentAIs.add(new WorkerRush(utt));
     // opponentAIs.add(new EconomyLightRush(utt));
     opponentAIs.add(new LightRush(utt));
-    // opponentAIs.add(new EconomyLightRush(utt));
-    opponentAIs.add(new RandomBiasedAI(utt));
-    // opponentAIs.add(new NaiveMCTS(utt));
+    opponentAIs.add(new EconomyLightRush(utt));
+    // opponentAIs.add(new RandomBiasedAI(utt));
+    opponentAIs.add(new NaiveMCTS(utt));
     // ai2 = new RandomBiasedAI();
     // ai2 = new WorkerRushPlusPlus(utt);
     // ai2 = new WorkerRush(utt);
@@ -105,21 +105,21 @@ public class EvaluationTournament {
     // ai2 = new UCTFirstPlayUrgency(utt);
 
     String [] mapsString = {
-        "maps/melee14x12Mixed18.xml",
+        // "maps/melee14x12Mixed18.xml",
         "maps/16x16/basesWorkers16x16A.xml",
-        // "maps/basesWorkers32x32A.xml",
-        // "maps/barricades24x24.xml",
+        "maps/basesWorkers32x32A.xml",
+        "maps/barricades24x24.xml",
         // "maps/8x8/FourBasesWorkers8x8.xml",
         // "maps/16x16/TwoBasesBarracks16x16.xml",
-        // "maps/NoWhereToRun9x8.xml",
-        // "maps/chambers32x32.xml",
+        "maps/NoWhereToRun9x8.xml",
+        "maps/chambers32x32.xml",
         // "maps/GardenOfWar64x64.xml",
-        // "maps/BroodWar/(2)Benzene.scxA.xml",
+        "maps/BroodWar/(2)Benzene.scxA.xml",
         // "maps/BroodWar/(2)Destination.scxA.xml",
         // "maps/BroodWar/(4)Andromeda.scxB.xml"
     };
     List<String> maps = Arrays.asList(mapsString);
-    int iterations = 2;
+    int iterations = 4;
     int maxGameLength = 10000;
     int timeBudget = 100;
     int iterationsBudget = -1;
