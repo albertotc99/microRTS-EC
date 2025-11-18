@@ -16,24 +16,28 @@ import ai.mcts.naivemcts.NaiveMCTS;
 import myAgent.MyAgent;
 import rts.units.UnitTypeTable;
 import tournaments.FixedOpponentsTournament;
+import mayariBot.mayari;
 
 public class EvaluationTournament {
 
   public static void main(String[] args) {
     // Parsear los parámetros
-    double[] doubleParams = new double[8];
-    int[] intParams = new int[2];
+  double[] doubleParams = new double[8];
+  int[] intParams = new int[2];
     UnitTypeTable utt = new UnitTypeTable();    
     AI agent = new MyAgent(utt);
 
-    if (args.length != 10) {
-      System.err.println("Debe proporcionar exactamente 10 parámetros.");
-      System.exit(1);
-      // agent = new MyAgent(utt, 0.2, 0.82, 0.85, 3, 0, 0.7, 0.4, 0.3, 0.12, 0.25);
-      // agent = new MyAgent(utt, 0.2, 0.95, 0.9, 3, 0, 0.3, 0.4, 0.3, 0.08, 0.1);
-      // agent = new MyAgent(utt, 0.2, 1, 0.8, 3, 20, 0, 0, 0, 0.08, 0.1);
+  // Ahora aceptamos 11 parámetros (10 numéricos + 1 string del agente) o 12
+  // (11 del agente + nombre de fichero opcional)
+  if (args.length != 11 && args.length != 12) {
+    System.err.println("Debe proporcionar 11 parámetros (10 numéricos + etiqueta del agente) o 12 parámetros (añadiendo filename opcional).");
+    System.exit(1);
+    // Valor por defecto en caso de validación previa (no alcanzable tras exit):
+    agent = new MyAgent(utt, 0.2, 0.82, 0.85, 3, 0, 0.7, 0.4, 0.3, 0.12, 0.25, "");
+    // agent = new MyAgent(utt, 0.2, 0.95, 0.9, 3, 0, 0.3, 0.4, 0.3, 0.08, 0.1, "");
+    // agent = new MyAgent(utt, 0.2, 1, 0.8, 3, 20, 0, 0, 0, 0.08, 0.1, "");
 
-    } else {
+  } else {
       try {
         // Verify and assign the first 3 doubles
         for (int i = 0; i < 3; i++) {
@@ -53,7 +57,7 @@ public class EvaluationTournament {
 
         // Verifify and assign 5 last doubles
         for (int i = 0; i < 5; i++) {
-            doubleParams[i + 3] = Double.parseDouble(args[i + 5]);
+          doubleParams[i + 3] = Double.parseDouble(args[i + 5]);
             if (doubleParams[i + 3] < 0.0 || doubleParams[i + 3] > 1.0) {
                 throw new IllegalArgumentException("Todos los parámetros double deben estar entre 0 y 1.");
             }
@@ -67,10 +71,13 @@ public class EvaluationTournament {
           System.exit(1);
       }
  
-      agent = new MyAgent(utt, doubleParams[0], doubleParams[1], doubleParams[2], 
-                intParams[0], intParams[1], 
-                doubleParams[3], doubleParams[4], doubleParams[5], 
-                doubleParams[6], doubleParams[7]);
+    // El parámetro 11 (args[10]) es una etiqueta/string adicional para el agente
+    String agentLabel = args[10];
+
+    agent = new MyAgent(utt, doubleParams[0], doubleParams[1], doubleParams[2], 
+        intParams[0], intParams[1], 
+        doubleParams[3], doubleParams[4], doubleParams[5], 
+        doubleParams[6], doubleParams[7], agentLabel);
     }
 
     List<AI> selectedAIs = new ArrayList<>();
@@ -78,12 +85,13 @@ public class EvaluationTournament {
     // selectedAIs.add(new MyAgent(utt));
 
     List<AI> opponentAIs = new ArrayList<>();
-    // opponentAIs.add(new WorkerRush(utt));
+    opponentAIs.add(new WorkerRush(utt));
     // opponentAIs.add(new EconomyLightRush(utt));
-    opponentAIs.add(new LightRush(utt));
+    // opponentAIs.add(new LightRush(utt));
     opponentAIs.add(new EconomyLightRush(utt));
+    opponentAIs.add(new mayari(utt));
     // opponentAIs.add(new RandomBiasedAI(utt));
-    opponentAIs.add(new NaiveMCTS(utt));
+    // opponentAIs.add(new NaiveMCTS(utt));
     // ai2 = new RandomBiasedAI();
     // ai2 = new WorkerRushPlusPlus(utt);
     // ai2 = new WorkerRush(utt);
@@ -105,23 +113,25 @@ public class EvaluationTournament {
     // ai2 = new UCTFirstPlayUrgency(utt);
 
     String [] mapsString = {
-        // "maps/melee14x12Mixed18.xml",
+        //"maps/melee14x12Mixed18.xml",
         "maps/16x16/basesWorkers16x16A.xml",
-        "maps/basesWorkers32x32A.xml",
-        "maps/barricades24x24.xml",
-        // "maps/8x8/FourBasesWorkers8x8.xml",
-        // "maps/16x16/TwoBasesBarracks16x16.xml",
-        "maps/NoWhereToRun9x8.xml",
-        "maps/chambers32x32.xml",
-        // "maps/GardenOfWar64x64.xml",
+        ///"maps/basesWorkers32x32A.xml",
+        "maps/BWDistantResources32x32.xml",
+        ///"maps/barricades24x24.xml",
+        //"maps/8x8/FourBasesWorkers8x8.xml",
+        ///"maps/16x16/TwoBasesBarracks16x16.xml",
+        // "maps/NoWhereToRun9x8.xml",
+        ///"maps/chambers32x32.xml",
+        ///"maps/GardenOfWar64x64.xml",
+        "maps/DoubleGame24x24.xml",
         "maps/BroodWar/(2)Benzene.scxA.xml",
-        // "maps/BroodWar/(2)Destination.scxA.xml",
+        "maps/BroodWar/(2)Destination.scxA.xml",
         // "maps/BroodWar/(4)Andromeda.scxB.xml"
     };
     List<String> maps = Arrays.asList(mapsString);
     int iterations = 4;
-    int maxGameLength = 10000;
-    int timeBudget = 100;
+    int maxGameLength = 14000;
+    int timeBudget = 1000;
     int iterationsBudget = -1;
     int preAnalysisBudget = 0;
     boolean fullObservability = true;
@@ -129,28 +139,34 @@ public class EvaluationTournament {
     boolean gcCheck = true;
     boolean preGameAnalysis = preAnalysisBudget > 0;
     // String prefix = "./fitness/tournament_";
-    String prefix = "./FirstExecGA/tournament_";
-    int idx = 0;
-    File file;
-    do {
-        idx++;
-        file = new File(prefix + idx);
-    }while(file.exists());
-    file.mkdir();
-    String tournamentfolder = file.getPath();
-    final File fileToUse = new File(tournamentfolder + "/tournament.csv");
-    final String tracesFolder = (tournamentfolder + "/traces");
+    String timestamp = String.valueOf(System.currentTimeMillis());
+    String nanoTime = String.valueOf(System.nanoTime());
+    String fileName;
+    
+    // Verificar si se proporcionó filename como parámetro (posición 12)
+    if (args.length == 12) {
+      fileName = args[11];
+    } else {
+      fileName = "./resultados/GABotsLit/tournament_" + timestamp + "_" + nanoTime + ".csv";
+    }
+    
+    File file = new File(fileName);
+    // file.mkdir();
+    // String tournamentfolder = file.getPath();
+    // final File fileToUse = new File(tournamentfolder + "/tournament.csv");
+    //final String tracesFolder = (tournamentfolder + "/traces");
 
     try {
-      System.out.print(tournamentfolder + "/tournament.csv");
-      Writer writer = new FileWriter(fileToUse);
+      //System.out.print(tournamentfolder + "/tournament.csv");
+      System.out.print(file.getPath());
+      Writer writer = new FileWriter(file);
       new FixedOpponentsTournament(selectedAIs, opponentAIs).runTournament(maps,
                                           iterations, maxGameLength, timeBudget, iterationsBudget, 
-                                          preAnalysisBudget, 100, // 1000 is just to give 1 second to the AIs to load their read/write folder saved content
+                                          preAnalysisBudget, 1000, // 1000 is just to give 1 second to the AIs to load their read/write folder saved content
                                           fullObservability, timeOutCheck, gcCheck, preGameAnalysis, 
-                                          utt, tracesFolder,
-                                          writer, null,
-                                          tournamentfolder);
+                                          utt, null,
+                                          writer, null, // tracesFolder
+                                          null);
 
       writer.close();
     } catch (Exception e) {
